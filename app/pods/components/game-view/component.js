@@ -99,7 +99,7 @@ export default Component.extend({
       this.socket.emit('game_start', this.get('accessPass'));
     },
     submit_entry(vote) {
-      this.socket.emit('vote', this.get('accessPass'), vote);
+      this.socket.emit('vote', this.get('accessPass'), vote + " " + this.get('currentModel').challenge );
     },
     set_name(name) {
       this.socket.emit('enroll', this.get('accessPass'), name);
