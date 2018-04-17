@@ -1,0 +1,98 @@
+<div class='game'>
+    {{!-- Toolbar --}}
+    {{#paper-toolbar class='header'}}
+        {{#paper-toolbar-tools}}
+            {{#paper-button iconButton=true}}
+            {{paper-icon "menu"}}
+            {{/paper-button}}
+            <div class='title'>
+            <div class='primary'>
+                Trendify
+            </div>
+            {{#if currentModel.room}}
+                <div class='secondary'>
+                Current room: {{currentModel.room}}
+                </div>
+            {{/if}}
+            </div>
+            <div class='context'>
+            {{name}}
+            </div>
+        {{/paper-toolbar-tools}}
+    {{/paper-toolbar}}
+    {{!-- Entire game view --}}
+    <div class='game-content'>
+        {{!-- Sidebar --}}
+        <div class='sidebar users layout-column layout-align-space-between'>
+            <div class='list flex-80'>
+                Available Users
+                {{paper-divider}}
+                {{#each currentModel.users as |user|}}
+                    <div class='user-item'>
+                    <div class='icon'>
+                        {{paper-icon 'face'}}
+                    </div>
+                    <div class='primary'>
+                        {{name}}
+                    </div>
+                    </div>
+                    {{paper-divider}}
+                {{/each}}
+            </div>
+            {{paper-divider}}
+            
+            {{#if (eq name 'host')}}
+                <div class='admin-panel layout layout-align-center-center flex-20'>
+                    {{#if (eq currentModel.gameState 'lobby')}}
+                    <div class='item'>
+                        {{#paper-button class="start-button " onClick=(action 'game_start') raised=true primary=true}}Start Game{{/paper-button}}
+                    </div>
+                    {{/if}}
+                    <div class='item'>
+                        {{#if (eq currentModel.gameState 'round')}}
+                            {{paper-progress-circular
+                                value=(mult
+                                (div (moment-diff
+                                    (now interval=1000)
+                                    (moment currentModel.rounds.ends_at)) 1000)
+                                    (div 100 60))
+                            }}
+                        {{/if}}
+                    </div>
+                </div>
+            {{/if}}
+        </div>
+        <div class='main layout-column layout-align-start-center'>
+            {{#if (eq currentModel.gameState 'round')}}
+            <div class="challenge">
+                Current word is
+                <span class='current-word'>
+                "{{currentModel.challenge}}"
+                </span>
+            </div>
+            <div class="submit-word latout-row layout-align- layout-align-space-between-stretch">
+                {{paper-input class="flex-80" label="Entry: " value=entry onChange=(action (mut entry))}}
+                {{#paper-button onClick=(action 'submit_entry' entry) disabled=(not entry) raised=true primary=true}}Submit Entry{{/paper-button}}
+            </div>
+            {{/if}}
+            {{#if (eq currentModel.gamestate 'intermission')}}
+            <div class="scoreboard">
+                {{player-scores users=currentModel.users}}
+            </div>
+            <div class="next-round">
+                {{#paper-button class="start-button" onClick=(action 'game_start') raised=true primary=true}}Next Round{{/paper-button}}
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+{{#if showEnrollModal}}
+  {{enroll-modal
+    onNameChange=(action (mut enrollName))
+    onSubmit=(action 'set_name' enrollName)
+    onClose=(action (mut showEnrollModal) false)
+    name=enrollName
+  }}
+{{/if}}
+{{yield}}

@@ -1,8 +1,9 @@
-.game-host-content {
-  height: 100%;
+.game-content {
+  height: calc(100%-80px);
   display: flex;
   flex-direction: row;
   .sidebar {
+    height: calc(100VH - 80px);
     display: flex;
     flex-direction: column;
     flex: 2;
@@ -44,5 +45,8 @@
     display: flex;
     flex: 5;
     justify-content: center;
+    .submit-word {
+      width: 80%;
+    }
   }
 }
